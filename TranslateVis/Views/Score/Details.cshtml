@@ -1,0 +1,101 @@
+﻿@model TranslateVis.DTO.AttemdanceDetailOutput
+@{
+    ViewBag.Title = "考勤详情";
+    Layout = null;
+}
+
+<style>
+    .container {
+        overflow: hidden;
+    }
+
+    .col {
+        margin: 10px 15px;
+        display: flex;
+    }
+
+    .col-md-3 {
+        font-weight: 200;
+        width: 120px;
+        text-align: right;
+        padding-right: 15px;
+    }
+</style>
+<div class="container">
+    <div class="col">
+        <div class="col-md-3">
+            @Html.LabelFor(model => model.LinkMan, "名称")
+        </div>
+        <div class="col-md-9">
+            @Html.DisplayFor(model => model.LinkMan)
+        </div>
+    </div>
+    <div class="col">
+        <div class="col-md-3">
+            @Html.LabelFor(model => model.AttendanceDate, "日期")
+        </div>
+        <div class="col-md-9">
+            @Html.DisplayFor(model => model.AttendanceDate)
+        </div>
+    </div>
+    <div class="col">
+        <div class="col-md-3">
+            @Html.LabelFor(model => model.Score, "总得分")
+        </div>
+        <div class="col-md-9">
+            @ViewBag.Score
+        </div>
+    </div>
+    <div class="col">
+        <div class="col-md-3">
+            @Html.LabelFor(model => model.AScore, "纪律分（1）")
+        </div>
+        <div class="col-md-9">
+            @Html.DisplayFor(model => model.AScore)
+        </div>
+    </div>
+    <div class="col">
+        <div class="col-md-3">
+            @Html.LabelFor(model => model.BScore, "日志及进度（1）")
+        </div>
+        <div class="col-md-9">
+            @Html.DisplayFor(model => model.BScore)
+        </div>
+    </div>
+    <div class="col">
+        <div class="col-md-3">
+            @Html.LabelFor(model => model.CScore, "工作态度（3）")
+        </div>
+        <div class="col-md-9">
+            @Html.DisplayFor(model => model.CScore)
+        </div>
+    </div>
+    <div class="col">
+        <div class="col-md-3">
+            @Html.LabelFor(model => model.DScore, "工作任务（5）")
+        </div>
+        <div class="col-md-9">
+            @Html.DisplayFor(model => model.DScore)
+        </div>
+    </div>
+    <div class="col">
+        <div class="col-md-3">
+            @Html.LabelFor(model => model.AttendanceType, "类型")
+        </div>
+        <div class="col-md-9">
+            @Html.DisplayFor(model => model.AttendanceType)
+        </div>
+    </div>
+    <div class="col">
+        <div class="col-md-3">
+            @Html.LabelFor(model => model.Remark, "描述")
+        </div>
+        <div class="col-md-9">
+            @Html.DisplayFor(model => model.Remark)
+        </div>
+    </div>
+</div>
+
+
+
+

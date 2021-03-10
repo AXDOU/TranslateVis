@@ -1,0 +1,560 @@
+﻿@using TranslateVis.DTO
+@model List<TranslateVis.DTO.AttendanceStatisticsOutput>
+@{
+    ViewBag.Title = "考勤管理";
+    var titles = ViewBag.titles as List<TranslateVis.DTO.AttendanceTitle>;
+    var minwidth = (titles.Count + 3) * 65 + 105 * 4;
+    var colTotal = titles.Count;
+
+    var departments = new List<string>{""};
+    var groups = ViewBag.groups as List<string>;
+    departments.AddRange(groups);
+}
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="~/lib/layui/layui.all.js"></script>
+<script src="~/lib/layui/lay/modules/common.js"></script>
+<link href="~/lib/layui/css/modules/laydate/laydate.css" rel="stylesheet" />
+<script src="~/lib/layui/lay/modules/laydate.js"></script>
+<style>
+    #content > div:first-child {
+        height: 100%;
+    }
+
+    .layui-treeSelect .ztree li span.button.switch {
+        position: relative;
+        top: -10px;
+    }
+
+    .layui-form-label {
+        white-space: pre;
+    }
+
+    #layui-laydate1, #layui-laydate2 {
+        height: 371px;
+    }
+</style>
+<style>
+    body {
+        font-family: Helvetica Neue,Helvetica,PingFang SC,Hiragino Sans GB,Microsoft YaHei,\\5FAE\8F6F\96C5\9ED1,Arial,sans-serif;
+        font-size: 14px;
+        line-height: 1.5;
+        color: #666;
+        overflow: hidden;
+        background: #ffffff;
+    }
+
+    .table-box {
+        height: 100%;
+        width: 100%;
+        overflow-y: hidden;
+        overflow-x: scroll;
+        -webkit-overflow-scrolling: touch;
+        position: relative;
+    }
+
+    .table-head {
+        background-color: #F9FAFE;
+        border-top: 1px solid #e6e6e6;
+        border-bottom: 1px solid #e6e6e6;
+        color: #777;
+        table-layout: fixed;
+        position: absolute;
+        top: 0;
+        text-align: center;
+    }
+
+        .table-head th {
+            border-collapse: collapse;
+            height: 40px;
+        }
+
+    .table-body-box {
+        table-layout: fixed;
+        -webkit-overflow-scrolling: touch;
+        overflow-x: hidden;
+        overflow-y: scroll;
+        height: 100%;
+        box-sizing: border-box;
+        padding-top: 92px;
+    }
+
+    .table-body {
+        table-layout: fixed;
+        width: 100%;
+        background-color: white;
+        text-align: center;
+    }
+
+    table > tr > th {
+        border-bottom: 1px solid #e6e6e6;
+        padding: 0;
+        background: #fff;
+        text-align: center;
+        height: 36px;
+        line-height: 36px;
+        background: #f6f6f6;
+        background-color: #f7fbfe;
+        border-bottom-width: 2px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        text-align: left;
+        border-radius: 6px 6px 0 0;
+        overflow: hidden;
+        font-weight: normal;
+    }
+
+    .text-elli {
+        overflow: hidden;
+        word-break: break-word;
+        word-wrap: break-word;
+        --moz-text-overflow: ellipsis;
+        --webkit-text-overflow: ellipsis;
+        color: #666;
+        font-weight: normal;
+    }
+
+    table {
+        border-spacing: 0;
+        border-collapse: collapse;
+        table-layout: fixed; /*设置表格宽度固定对齐*/
+    }
+
+        table th {
+            background-color: #F4F5F7;
+        }
+
+    td, th {
+        border: 1px solid #e6e6e6;
+        white-space: normal;
+        line-height: 1.8;
+    }
+
+    table > tr > td {
+        border-bottom: 1px solid #e6e6e6;
+        padding: 0;
+        background: #fff;
+        line-height: 25px;
+    }
+
+    @@media (max-height: 700px) {
+        .table-head table > tr > th, .table-body > tr > th > span {
+            padding: 5px;
+        }
+    }
+
+    *, ::after, ::before {
+        box-sizing: border-box;
+    }
+
+    ::selection {
+        color: rgb(255, 255, 255);
+        background: rgb(45, 183, 245);
+    }
+
+    .table-box::-webkit-scrollbar {
+        width: 7px;
+        height: 7px;
+        background-color: transparent;
+    }
+
+    .table-body-box::-webkit-scrollbar {
+        display: none;
+    }
+
+    .table-box::-webkit-scrollbar-thumb {
+        box-shadow: rgba(0, 0, 0, 0.3) 0px 0px 6px inset;
+        background-color: rgb(157, 159, 161);
+        border-radius: 7px;
+    }
+
+    .day {
+        font-weight: normal;
+    }
+
+    .text-tag {
+        color: #ff0000;
+    }
+
+    .text-tag-b {
+        color: #333;
+    }
+
+    .table-body tr:hover {
+        background: #f4f5f7;
+    }
+
+    /**page**/
+    .pager_inline {
+        display: inline;
+    }
+
+        .pager_inline a {
+            border: none;
+        }
+
+            .pager_inline a:hover {
+                background: #009688;
+            }
+
+    .contain {
+        width: 100%;
+        height: 100%;
+        overflow: scroll;
+        position: relative;
+        float: left;
+    }
+
+    th, td, tr {
+        border: 1px solid #cdd;
+        height: 30px;
+        width: 100px;
+        text-align: center;
+    }
+
+    .Block1 {
+        position: fixed;
+        z-index: 10001;
+        width: 100px;
+        height: 91px
+    }
+
+    .Block2 {
+        position: sticky;
+        top: 0px;
+        margin-left: 640px;
+        z-index: 100;
+    }
+
+    .Block3 {
+        left: 0px;
+        float: left;
+        position: sticky;
+        z-index: 1000;
+        width: 100px;
+    }
+
+        .Block3 > tr {
+            background-color: #ffffff;
+        }
+
+    .Block4 {
+        left: 640px;
+        position: absolute;
+    }
+
+    .contain tr, td, th {
+        height: 39px
+    }
+
+    .contain td, th, tr {
+        background-color: #ffffff
+    }
+</style>
+<body style="height:100%;min-width:1050px;" id="content">
+    <div style=" height: 59px; display: inline; width: 100%;" class="header2  layoutOut">
+
+        @using (Html.BeginForm("Index", "Score"))
+        {
+        <div style="display: inline-flex;">
+            <label class="layui-form-label">请选择</label>
+            <input class="date-picker" placeholder="开始" id="starttime" name="starttime" value="@ViewBag.startdate " autocomplete="off">
+            <input class="date-picker" placeholder="结束" id="endtime" name="endtime" value="@ViewBag.enddate" autocomplete="off">
+
+            <select id="department" name="department" style="width:120px;">
+                    @foreach (var item in departments as List<string>)
+                    {
+                        if (item == ViewBag.department && item != "")
+                        {
+                          <option value="@item" selected="selected">@item</option>
+                        }
+                        else if(item == "")
+                        {
+                          <option value="" selected="selected">请选择</option>
+                        }
+                        else
+                        {
+                          <option value="@item">@item</option>
+                        }
+                    }
+            </select>
+
+            <div class="input_group" style="margin:0 0 0 11px;">
+                <input type="text" name="keyword" style="width:220px" placeholder="输入姓名" class="layui-input" value="@ViewBag.keyword" autocomplete="off">
+                <span class="btn_group"><input type="submit" class="layui-btn layui-btn-normal" value="搜索" /></span>
+                <span class="btn_group"><input type="button" class="layui-btn layui-btn-normal" onclick="viewload.exportexcel()" value="导出excel" /></span>
+
+            </div>
+        </div>
+        }
+    </div>
+    <div class="bg" id="list" style="height:calc(100%  - 59px);min-width:1050px;">
+        <div class=" clearfix" style="height:calc(100% - 59px);width:100%;top:169px;">
+            <div class="table-box">
+
+                <div class="contain">
+                    <table class="Block1" cellspacing="0">
+                        <tr style="height: 39px;">
+                            <th class="" rowspan="2" width="105" style="width:120px"><span title="姓名" class="ant-table-column-sorterN text-elli">姓名</span></th>
+                            <th class="" rowspan="2" width="105" style="width:80px"><span title="部门" class="ant-table-column-sorterN text-elli">部门</span></th>
+                            <th class="" rowspan="2" width="105" style="width:80px"><span title="是否在职" class="ant-table-column-sorterN text-elli">是否在职</span></th>
+                            <th class="" rowspan="2" width="105" style="width:80px"><span title="总分值" class="ant-table-column-sorterN text-elli">总分值</span></th>
+                            <th class="" rowspan="2" width="65" style="width:100px"><span title="" class="ant-table-column-sorterN text-elli"><div class="rSpan2" title="应出勤天数(天)"><div class="title text-elli">应出勤天数</div><div class="unit">(天)</div></div></span></th>
+                            <th class="" rowspan="2" width="65" style="width:100px"><span title="" class="ant-table-column-sorterN text-elli"><div class="rSpan2" title="实际出勤天数(天)"><div class="title text-elli">实际出勤天数</div><div class="unit">(天)</div></div></span></th>
+                            <th class="" rowspan="2" width="65" style="width:80px"><span title="" class="ant-table-column-sorterN text-elli"><div class="rSpan2" title="漏签(次)"><div class="title text-elli">漏签</div><div class="unit">(次)</div></div></span></th>
+                        </tr>
+                    </table>
+                    <table class="Block2" cellspacing="0">
+                        <colgroup>
+                            @for (var i = 0; i < titles.Count; i++)
+                            {
+                            <col style="width: 100px; min-width: 100px;">
+                            }
+                        </colgroup>
+                        <tr style="height: 39px;">
+                            <th class="" colspan="@colTotal" rowspan="1" width="@colTotal*64"><span title="考勤日历" class="ant-table-column-sorterN text-elli">考勤日历</span></th>
+                        </tr>
+                        <tr class="min_width" style="height: 39px;">
+                            @foreach (var item in titles)
+                            {
+                            <th class="" rowspan="1"><div class="date" title="@item.AttendanceDate" style="@(item.WeekDay=="日"||item.WeekDay=="六" ? "color:red":"color: rgb(0, 0, 0);")"><div class="weekday text-elli">@item.WeekDay</div><div class="day">@item.Date</div></div></th>
+                            }
+                        </tr>
+                    </table>
+                    <table class="Block3" cellspacing="0">
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                            <tr class="ant-table-row  ant-table-row-level-0">
+                                <td class="" width="105" stsdata="@item.FullName" style="width:120px"><span class="ant-table-row-indent indent-level-0" style="padding-left: 0px;"></span><div class="text-elli">@item.FullName</div></td>
+                                <td class="" width="105" stsdata="@item.Department" style="width:80px"><a title="@item.Department"><div class="text-elli">@item.Department</div></a></td>
+                                <td class="" width="105" stsdata="@item.IsNotIncumbency" style="width:80px"><a title="@(item.IsNotIncumbency?"离职":"在职")"><div class="text-elli">@(item.IsNotIncumbency ? "离职" : "在职")</div></a></td>
+                                <td class="" width="65" stsdata="@item.Score" style="width: 80px"><a title="@item.Score"><div class="text-elli">@item.Score</div></a></td>
+                                <td class="" width="65" stsdata="@item.OnDutyDays" style="width:100px"><a title="@item.OnDutyDays"><div class="text-elli">@item.OnDutyDays</div></a></td>
+                                <td class="" width="65" stsdata="@item.ActualWorkingDays" style="width:100px"><a title="@item.ActualWorkingDays"><div class="text-elli">@item.ActualWorkingDays</div></a></td>
+                                <td class="" width="65" stsdata="@item.MissedCount" style="width:80px"><a title="@item.MissedCount"><div class="text-elli">@item.MissedCount</div></a></td>
+                            </tr>
+
+                            }
+                    </table>
+                    <table class="Block4" cellspacing="0">
+                        <tbody>
+
+                            @foreach (var item in Model)
+                            {
+                            <tr class="ant-table-row  ant-table-row-level-0">
+
+                                @{
+                                    WorkingStatistics working = null;
+                                    List<int> attendancedTypes = new List<int> { 1, 2 };
+                                }
+                                @if (item.Statistics != null && item.Statistics.Count > 0)
+                                {
+                                    for (var i = 0; i < titles.Count; i++)
+                                    {
+                                        {
+                                            working = item.Statistics.FirstOrDefault(x => x.AttendanceDate.Date == titles[i].AttendanceDate.Date);
+                                        }
+                                        if (working != null)
+                                        {
+                                <td class="" width="65" stsdata="@working.AttendanceDate">
+                                    <a title="@working.AttendanceTag" onclick='viewload.layOpenDeatil("@working.AttendancedId")'>
+                                        @if (working.AttendanceTag == null)
+                                                    {
+                                        <div class="text-elli"></div>
+                                                    }
+                                                    else if (working.AttendancedType == 1)
+                                                    {
+                                        <div class="text-elli text-tag">
+                                            <p class="text-tag-b text-tag">
+                                                @working.ActualType @working.AttendancedScore
+                                            </p>
+                                        </div>
+                                                    }
+                                                    else
+                                                    {
+                                        <div class="text-elli"><p>@working.ActualType @working.AttendancedScore</p></div>
+                                                    }
+                                    </a>
+                                </td>
+                                        }
+                                        else
+                                        {
+                                <td class="" width="65" stsdata="">
+                                    <a title="" onclick='viewload.layOpenEdit("@item.UserId","@titles[i].AttendanceDate.ToString("yyyy-MM-dd")")'>
+                                        编辑
+                                    </a>
+                                </td>
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    for (var i = 0; i < titles.Count; i++)
+                                    {
+                                <td class="" width="65" stsdata="">
+                                    <a title="" onclick='viewload.layOpenEdit("@item.UserId","@titles[i].AttendanceDate.ToString("yyyy-MM-dd")")'>
+                                        编辑
+                                    </a>
+                                </td>
+                                    }
+                                }
+                            </tr>
+                            }
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    var index;
+    (function () {
+        viewload = {
+            init: function () {
+                viewload.dateconfig();
+                //viewload.layuiconfig();
+                viewload.loadinganimation();
+            },
+            loadinganimation: function () {
+                $(document).ajaxStart(function () {
+                    layui.use(['layer', 'form'], function () {
+                        index = layer.load(0, { shade: false });
+
+                        console.log(index);
+                    });
+                });
+                $(document).ajaxComplete(function () {
+                    layui.use(['layer', 'form'], function () {
+                        var layer = layui.layer;
+                        layer.close(index);
+                        //调用close方法,关闭全局变量index对应的加载效果
+                    });
+                });
+            },
+            exportexcel: function () {
+                var startdate = datahelper.formatEnddate($("#starttime").val());
+                var enddate = datahelper.formatEnddate( $("#endtime").val());
+                var keyword = $("input[name='keyword']").val();
+                var department = $("#department").val();
+                if (confirm('确定导出？')) location.href = '/Score/ExportExcel?starttime=' + startdate
+                         + '&endtime=' + enddate + '&keyword=' + keyword +"&department=" + department;
+            },
+            dateconfig:function(){
+                var nowDate = new Date();
+                var startdate = datahelper.formatStartDate("@ViewBag.startdate");
+                var enddate = datahelper.formatEnddate("@ViewBag.enddate");
+                layui.use('laydate', function () {
+                    laydate = layui.laydate;
+                  var start =  laydate.render({
+                        elem: '#starttime',
+                        type: 'date',
+                        value: startdate,
+                        trigger: 'click',
+                        done:function(value,date,endDate){
+                            end.config.min={
+                                year:date.year,
+                                month:date.month-1,
+                                date: date.date
+                            }
+                        }
+                    });
+                   var end = laydate.render({
+                        elem: '#endtime',
+                        type: 'date',
+                        value: enddate,
+                        trigger: 'click',
+                        done:function(value,date,endDate){
+                            start.config.max = {
+                                year:date.year,
+                                month:date.month-1,
+                                date: date.date
+                            }
+                        }
+                    });
+                });
+            },
+            layuiconfig:function(){
+                //$('#parentDep').val(@@department);
+                $.ajax({
+                    url: '/jbUserManagerSys/DepartmentManager/GetDepTreeFilter',
+                    type: "post",
+                    success: function (data) {
+                        layui.use(['treeSelect', 'form'], function () {
+                            var allData = [{ id: -1, name: '全部', IsChecked: 1 }].concat(data);
+
+                            var treeSelect = layui.treeSelect;
+                            treeSelect.render({
+                                id: 'serachDepartment',
+                                elem: '#parentDep',
+                                type: 'POST',
+                                data: allData,
+                                placeholder: '请选择部门',
+                                search: false,
+                                click: function (d) {
+                                    $('#parentDep').val(d.current.id);
+                                },
+                                success: function (d) {
+                                    //设置默认选择节点
+                                    //treeSelect.checkNode('parentDep', @@department);
+                                }
+                            });
+                        })
+                    },
+                    error: function () {
+
+                    }
+                })
+
+            },
+            layOpenEdit:function(id,date){
+                layer.open({
+                    type: 2,
+                    area: ['540px', '450px'],
+                    title: '编辑',
+                    closeBtn: 1,
+                    shade: 0.6,
+                    shadeClose: false,
+                    fixed: false,
+                    content: "/Score/Edit?userId=" + id + "&attendanceddate=" + date
+                });
+            },
+            layOpenDeatil: function (attendancedId) {
+                layer.open({
+                    type: 2,
+                    area: ['540px', '450px'],
+                    title: '详情',
+                    closeBtn: 1,
+                    shade: 0.6,
+                    shadeClose: false,
+                    fixed: false,
+                    content: "/Score/Details?attendancedId=" + attendancedId
+                });
+            }
+        },
+        datahelper = {
+            formatStartDate: function (date) {
+                var nowDate = new Date();
+                if (date == null || date == "" || date == "undefined") return new Date(nowDate.getFullYear(), nowDate.getMonth(), 1);
+                return date;
+            },
+            formatEnddate: function (date) {
+                var nowDate = new Date();
+                if (date == null || date == "" || date == "undefined") return new Date(nowDate.getFullYear(), nowDate.getMonth()+1,0);
+                return date;
+            }
+        }
+    }(jQuery))
+    viewload.init();
+</script>
+
+
+
+
+
+
+
+

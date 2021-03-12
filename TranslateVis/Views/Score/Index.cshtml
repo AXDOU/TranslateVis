@@ -219,7 +219,7 @@
         position: fixed;
         z-index: 10001;
         width: 100px;
-        height: 91px
+        height: 98px
     }
 
     .Block2 {
@@ -247,7 +247,7 @@
     }
 
     .contain tr, td, th {
-        height: 39px
+        height: 44px
     }
 
     .contain td, th, tr {
@@ -265,19 +265,19 @@
             <input class="date-picker" placeholder="结束" id="endtime" name="endtime" value="@ViewBag.enddate" autocomplete="off">
 
             <select id="department" name="department" style="width:120px;">
-                    @foreach (var item in departments as List<string>)
+                @foreach (var item in departments as List<string>)
                     {
                         if (item == ViewBag.department && item != "")
                         {
-                          <option value="@item" selected="selected">@item</option>
+                <option value="@item" selected="selected">@item</option>
                         }
                         else if(item == "")
                         {
-                          <option value="" selected="selected">请选择</option>
+                <option value="" selected="selected">请选择</option>
                         }
                         else
                         {
-                          <option value="@item">@item</option>
+                <option value="@item">@item</option>
                         }
                     }
             </select>
@@ -361,7 +361,7 @@
                                         if (working != null)
                                         {
                                 <td class="" width="65" stsdata="@working.AttendanceDate">
-                                    <a title="@working.AttendanceTag" onclick='viewload.layOpenDeatil("@working.AttendancedId")'>
+                                    <a title="@working.AttendanceTag" onclick='viewload.layOpenDeatil("@item.UserId","@titles[i].AttendanceDate.ToString("yyyy-MM-dd")","@working.AttendancedId")'>
                                         @if (working.AttendanceTag == null)
                                                     {
                                         <div class="text-elli"></div>
@@ -384,7 +384,7 @@
                                         else
                                         {
                                 <td class="" width="65" stsdata="">
-                                    <a title="" onclick='viewload.layOpenEdit("@item.UserId","@titles[i].AttendanceDate.ToString("yyyy-MM-dd")")'>
+                                    <a title="" onclick='viewload.layOpenEdit("@item.UserId","@titles[i].AttendanceDate.ToString("yyyy-MM-dd")",0)'>
                                         编辑
                                     </a>
                                 </td>
@@ -396,7 +396,7 @@
                                     for (var i = 0; i < titles.Count; i++)
                                     {
                                 <td class="" width="65" stsdata="">
-                                    <a title="" onclick='viewload.layOpenEdit("@item.UserId","@titles[i].AttendanceDate.ToString("yyyy-MM-dd")")'>
+                                    <a title="" onclick='viewload.layOpenEdit("@item.UserId","@titles[i].AttendanceDate.ToString("yyyy-MM-dd")",0)'>
                                         编辑
                                     </a>
                                 </td>
@@ -510,7 +510,7 @@
                 })
 
             },
-            layOpenEdit:function(id,date){
+            layOpenEdit:function(userId,date,id){
                 layer.open({
                     type: 2,
                     area: ['540px', '450px'],
@@ -519,20 +519,30 @@
                     shade: 0.6,
                     shadeClose: false,
                     fixed: false,
-                    content: "/Score/Edit?userId=" + id + "&attendanceddate=" + date
+                    content: "/Score/Edit?userId=" + userId + "&attendanceddate=" + date + "&id=" + id
                 });
             },
-            layOpenDeatil: function (attendancedId) {
-                layer.open({
-                    type: 2,
-                    area: ['540px', '450px'],
-                    title: '详情',
-                    closeBtn: 1,
-                    shade: 0.6,
-                    shadeClose: false,
-                    fixed: false,
-                    content: "/Score/Details?attendancedId=" + attendancedId
-                });
+            layOpenDeatil: function (userId, attdanceDate, attendancedId) {
+                var nowDate = new Date();
+                var nowtime = nowDate.getFullYear() + "-" + ((nowDate.getMonth() + 1) < 10 ? "0" : "") + (nowDate.getMonth() + 1) + "-" + (nowDate.getDate() < 10 ? "0" : "") + nowDate.getDate();
+                var dayDiff = datahelper.getDateDiff(attdanceDate, nowtime, "d");
+                console.log(dayDiff);
+                if (dayDiff > 4) {
+                    layer.open({
+                        type: 2,
+                        area: ['540px', '450px'],
+                        title: '详情',
+                        closeBtn: 1,
+                        shade: 0.6,
+                        shadeClose: false,
+                        fixed: false,
+                        content: "/Score/Details?attendancedId=" + attendancedId
+                    });
+                }
+                else
+                {
+                    viewload.layOpenEdit(userId, attdanceDate, attendancedId);
+                }
             }
         },
         datahelper = {
@@ -545,7 +555,36 @@
                 var nowDate = new Date();
                 if (date == null || date == "" || date == "undefined") return new Date(nowDate.getFullYear(), nowDate.getMonth()+1,0);
                 return date;
+            },
+            getDateDiff: function (startTime, endTime, diffType) {
+                console.log(startTime);
+                console.log(endTime);
+                startTime = startTime.replace(/-/g, "/");            //将xxxx-xx-xx的时间格式，转换为 xxxx/xx/xx的格式
+            endTime = endTime.replace(/-/g, "/");
+            //将计算间隔类性字符转换为小写
+            diffType = diffType.toLowerCase();
+            var sTime = new Date(startTime); //开始时间
+            var eTime = new Date(endTime); //结束时间
+            //作为除数的数字
+            var divNum = 1;
+            switch (diffType) {
+                case "s":
+                    divNum = 1000;
+                    break;
+                case "m":
+                    divNum = 1000 * 60;
+                    break;
+                case "h":
+                    divNum = 1000 * 3600;
+                    break;
+                case "d":
+                    divNum = 1000 * 3600 * 24;
+                    break;
+                default:
+                    break;
             }
+            return parseInt((eTime.getTime() - sTime.getTime()) / parseInt(divNum)); //17jquery.com
+        }
         }
     }(jQuery))
     viewload.init();

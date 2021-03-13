@@ -31,8 +31,8 @@ namespace TranslateVis.DAL.DataEntities
 
 
         ///<summary>
-        ///
+        /// 部门ID
         ///</summary>
-        public string DepartmentName { get; set; }
+        public int DepartmentId { get; set; }
     }
 }

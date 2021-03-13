@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using TranslateVis.DAL.DataBase;
 using TranslateVis.DAL.DataEntities;
+using TranslateVis.DTO;
 
 namespace TranslateVis.Service
 {
@@ -15,9 +16,9 @@ namespace TranslateVis.Service
         /// </summary>
         /// <param name="parentId"></param>
         /// <returns></returns>
-        public List<string> GetDepartments(int parentId)
+        public List<FieldOutput> GetDepartments(int parentId)
         {
-            List<string> departments = base.GetList(x => x.PartentId == parentId).Select(x => x.DepartmentName).DefaultIfEmpty().ToList() ;
+            List<FieldOutput> departments = base.GetList(x => x.PartentId == parentId).Select(x => new FieldOutput { Value = x.Id, Text = x.DepartmentName }).DefaultIfEmpty().ToList();
             return departments;
         }
     }

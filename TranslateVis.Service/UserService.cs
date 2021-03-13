@@ -7,9 +7,10 @@ namespace TranslateVis.Service
 {
     public class UserService : Repository<UserInfo>
     {
-        public List<UserInfo> GetUsers(string keyword)
+        public List<UserInfo> GetUsers(string keyword, int department)
         {
-            return base.GetList(x => x.LinkMan.Contains(keyword));
+            if (department == 0) return base.GetList(x => x.LinkMan.Contains(keyword));
+            return base.GetList(x => x.LinkMan.Contains(keyword) && x.DepartmentId == department);
         }
     }
 }

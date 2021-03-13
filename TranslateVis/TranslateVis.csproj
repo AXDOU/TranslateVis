@@ -7,13 +7,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\favicon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\favicon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DotNetCore.NPOI" Version="1.2.3" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor" Version="2.2.0" />
     <PackageReference Include="Microsoft.jQuery.Unobtrusive.Ajax" Version="3.2.6" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.5" />
     <PackageReference Include="NPOI" Version="2.5.2" />
-    <PackageReference Include="NPOI.Excel" Version="2.1.1" />
     <PackageReference Include="SqlSugarCore" Version="5.0.2.6" />
   </ItemGroup>
 

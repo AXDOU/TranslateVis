@@ -1,0 +1,242 @@
+﻿body {
+    font-family: Helvetica Neue,Helvetica,PingFang SC,Hiragino Sans GB,Microsoft YaHei,\\5FAE\8F6F\96C5\9ED1,Arial,sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #666;
+    overflow: hidden;
+    background: #ffffff;
+    width:100%;
+    height:100%;
+}
+
+#content > div:first-child {
+    height: 100%;
+}
+
+.layui-treeSelect .ztree li span.button.switch {
+    position: relative;
+    top: -10px;
+}
+
+/*.layui-form-label {
+    white-space: pre;
+}
+
+#layui-laydate1, #layui-laydate2 {
+    height: 371px;
+}
+#header  input{
+    margin: 0 10px;
+}*/
+
+
+.table-box {
+    height: 100%;
+    width: 100%;
+    overflow-y: hidden;
+    overflow-x: scroll;
+    -webkit-overflow-scrolling: touch;
+    position: relative;
+}
+
+.table-head {
+    background-color: #F9FAFE;
+    border-top: 1px solid #e6e6e6;
+    border-bottom: 1px solid #e6e6e6;
+    color: #777;
+    table-layout: fixed;
+    position: absolute;
+    top: 0;
+    text-align: center;
+}
+
+    .table-head th {
+        border-collapse: collapse;
+        height: 40px;
+    }
+
+.table-body-box {
+    table-layout: fixed;
+    -webkit-overflow-scrolling: touch;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    height: 100%;
+    box-sizing: border-box;
+    padding-top: 92px;
+}
+
+.table-body {
+    table-layout: fixed;
+    width: 100%;
+    background-color: white;
+    text-align: center;
+}
+
+table > tr > th {
+    border-bottom: 1px solid #e6e6e6;
+    padding: 0;
+    background: #fff;
+    text-align: center;
+    height: 36px;
+    line-height: 36px;
+    background: #f6f6f6;
+    background-color: #f7fbfe;
+    border-bottom-width: 2px;
+}
+
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    text-align: left;
+    border-radius: 6px 6px 0 0;
+    overflow: hidden;
+    font-weight: normal;
+}
+
+.text-elli {
+    overflow: hidden;
+    word-break: break-word;
+    word-wrap: break-word;
+    --moz-text-overflow: ellipsis;
+    --webkit-text-overflow: ellipsis;
+    color: #666;
+    font-weight: normal;
+}
+
+table {
+    border-spacing: 0;
+    border-collapse: collapse;
+    table-layout: fixed; /*设置表格宽度固定对齐*/
+}
+
+    table th {
+        background-color: #F4F5F7;
+    }
+
+td, th {
+    border: 1px solid #e6e6e6;
+    white-space: normal;
+    line-height: 1.8;
+}
+
+table > tr > td {
+    border-bottom: 1px solid #e6e6e6;
+    padding: 0;
+    background: #fff;
+    line-height: 25px;
+}
+
+@media (max-height: 700px) {
+    .table-head table > tr > th, .table-body > tr > th > span {
+        padding: 5px;
+    }
+}
+
+*, ::after, ::before {
+    box-sizing: border-box;
+}
+
+::selection {
+    color: rgb(255, 255, 255);
+    background: rgb(45, 183, 245);
+}
+
+.table-box::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+    background-color: transparent;
+}
+
+.table-body-box::-webkit-scrollbar {
+    display: none;
+}
+
+.table-box::-webkit-scrollbar-thumb {
+    box-shadow: rgba(0, 0, 0, 0.3) 0px 0px 6px inset;
+    background-color: rgb(157, 159, 161);
+    border-radius: 7px;
+}
+
+.day {
+    font-weight: normal;
+}
+
+.text-tag {
+    color: #ff0000;
+}
+
+.text-tag-b {
+    color: #333;
+}
+
+.table-body tr:hover {
+    background: #f4f5f7;
+}
+
+/**page**/
+.pager_inline {
+    display: inline;
+}
+
+    .pager_inline a {
+        border: none;
+    }
+
+        .pager_inline a:hover {
+            background: #009688;
+        }
+
+.contain {
+    width: 100%;
+    height: 100%;
+    overflow: scroll;
+    position: relative;
+    float: left;
+}
+
+th, td, tr {
+    border: 1px solid #cdd;
+    height: 30px;
+    width: 100px;
+    text-align: center;
+}
+
+.Block1 {
+    position: fixed;
+    z-index: 10001;
+    width: 100px;
+    height: 98px
+}
+
+.Block2 {
+    position: sticky;
+    top: 0px;
+    margin-left: 640px;
+    z-index: 100;
+}
+
+.Block3 {
+    left: 0px;
+    float: left;
+    position: sticky;
+    z-index: 1000;
+    width: 100px;
+}
+
+    .Block3 > tr {
+        background-color: #ffffff;
+    }
+
+.Block4 {
+    left: 640px;
+    position: absolute;
+}
+
+.contain tr, td, th {
+    height: 44px
+}
+
+.contain td, th, tr {
+    background-color: #ffffff
+}

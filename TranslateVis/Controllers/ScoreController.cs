@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using TranslateVis.DAL.DataEntities;
@@ -20,19 +21,17 @@ namespace TranslateVis.Controllers
         private UserService userService = new UserService();
         private DepartmentService departmentService = new DepartmentService();
         private ScoreService scoreService = new ScoreService();
-        private static int parentId = 1;//技术事业部Id
+        private static readonly int parentGroupId = 1;//技术事业部Id
         // GET: ScoreController
-        public ActionResult Index(string startTime = "", string endTime = "", string department = "", string keyword = "")
+        public ActionResult Index(string startTime = "", string endTime = "", int department = 0, string keyword = "")
         {
 
             List<AttendanceStatisticsOutput> attendances = new List<AttendanceStatisticsOutput>();
-            keyword = keyword ?? string.Empty;
-            var userList = userService.GetUsers(keyword);
-            if (!string.IsNullOrWhiteSpace(department))
-            {
-                userList = userList.Where(x => x.DepartmentName.Equals(department)).ToList();
-            }
-            DateTime startDate = DateTime.Now.Date.AddDays(-10), endDate = DateTime.Now.AddDays(1).Date;
+            keyword ??= string.Empty;
+            var userList = userService.GetUsers(keyword, department);
+            var departmentList = departmentService.GetList();
+
+            DateTime startDate = DateTime.Now.Date.AddDays(-7), endDate = DateTime.Now.AddDays(1).Date;
             if (!string.IsNullOrWhiteSpace(startTime))
             {
                 DateTime.TryParse(startTime, out startDate);
@@ -42,16 +41,17 @@ namespace TranslateVis.Controllers
             {
                 DateTime.TryParse(endTime, out endDate);
             }
-
             foreach (var userItem in userList)
             {
-                var scoreList = scoreService.GetList(x => x.UserId == userItem.Id && x.AttendanceDate >= startDate && x.AttendanceDate <= endDate);
+                List<UserScore> scoreList = scoreService.GetList(x => x.UserId == userItem.Id && x.AttendanceDate >= startDate && x.AttendanceDate <= endDate);
+
+                Department departmentFirst = departmentList.FirstOrDefault(x => x.Id == userItem.DepartmentId);
                 AttendanceStatisticsOutput attendance = new AttendanceStatisticsOutput
                 {
-                    Department = userItem.DepartmentName,
+                    Department = departmentFirst == null ? string.Empty : departmentFirst.DepartmentName,
                     FullName = userItem.LinkMan,
-                    MissedCount = scoreList.Where(x => x.AttendanceType == 1).Count(),
                     OnDutyDays = scoreList.Count(),
+                    MissedCount = scoreList.Where(x => x.AttendanceType == 1).Count(),
                     ActualWorkingDays = scoreList.Where(x => x.AttendanceType == 0).Count(),
                     Score = scoreList.Select(x => x.Score).Sum(),
                     UserId = userItem.Id,
@@ -81,7 +81,8 @@ namespace TranslateVis.Controllers
             ViewBag.department = department;
             ViewBag.keyword = keyword;
             ViewBag.titles = GetAttendancTitles(startDate, endDate.AddDays(-1));
-            ViewBag.groups = departmentService.GetDepartments(parentId);
+            //ViewBag.groups = departmentService.GetDepartments(parentGroupId);
+            ViewBag.groups = new SelectList(departmentService.GetDepartments(parentGroupId), "Value", "Text", "请选择");
             return View(attendances);
         }
 
@@ -162,32 +163,29 @@ namespace TranslateVis.Controllers
         }
 
 
-        public FileResult ExportExcel(string startTime = "", string endTime = "", string department = "", string keyword = "")
+        public FileResult ExportExcel(string startTime = "", string endTime = "", int department = 0, string keyword = "")
         {
             List<AttendanceExportMode> attendances = new List<AttendanceExportMode>();
-            keyword = keyword ?? string.Empty;
-            var userList = userService.GetUsers(keyword);
-            if (!string.IsNullOrWhiteSpace(department))
-            {
-                userList = userList.Where(x => x.DepartmentName.Equals(department)).ToList();
-            }
-            DateTime startDate = DateTime.Now.Date.AddDays(-10), endDate = DateTime.Now.AddDays(1).Date;
-            if (!string.IsNullOrWhiteSpace(startTime))
-            {
-                DateTime.TryParse(startTime, out startDate);
-            }
+            keyword ??= string.Empty;
+            var userList = userService.GetUsers(keyword, department);
+            var departmentList = departmentService.GetList();
 
-            if (!string.IsNullOrWhiteSpace(endTime))
-            {
+            DateTime startDate = DateTime.Now.Date.AddDays(-7), endDate = DateTime.Now.Date.AddDays(1);
+            if (startTime.IsNotNullOrEmpty())
+                DateTime.TryParse(startTime, out startDate);
+
+            if (endTime.IsNotNullOrEmpty())
                 DateTime.TryParse(endTime, out endDate);
-            }
+
 
             foreach (var userItem in userList)
             {
                 var scoreList = scoreService.GetList(x => x.UserId == userItem.Id && x.AttendanceDate >= startDate && x.AttendanceDate <= endDate);
+                Department departmentFirst = departmentList.FirstOrDefault(x => x.Id == userItem.DepartmentId);
+
                 AttendanceExportMode attendance = new AttendanceExportMode
                 {
-                    Department = userItem.DepartmentName,
+                    Department = departmentFirst == null ? string.Empty : departmentFirst.DepartmentName,
                     FullName = userItem.LinkMan,
                     UserId = userItem.Id,
                     IsNotIncumbency = userItem.IsNotIncumbency,

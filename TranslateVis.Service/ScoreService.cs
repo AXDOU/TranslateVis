@@ -9,6 +9,10 @@ namespace TranslateVis.Service
 {
     public class ScoreService : Repository<UserScore>
     {
+        public List<object> GetPaged(DateTime startDate,DateTime endDate,int department, string keyword)
+        {
+            return new List<object>(); 
+        }
 
         public AttemdanceDetailOutput GetDetail(int id)
         {

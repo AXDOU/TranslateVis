@@ -10,6 +10,13 @@ namespace TranslateVis.Tools
     public static class StringExtension
     {
 
+        /// <summary>
+        /// 格式化日期
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="data"></param>
+        /// <param name="format"></param>
+        /// <returns></returns>
         public static string ToDateString<T>(this T data, string format = "yyyy-MM-dd")
         {
             if (data.GetType() == typeof(DateTime))
@@ -39,24 +46,7 @@ namespace TranslateVis.Tools
         }
 
 
-        /// <summary>
-        /// 判断两个值是否等于的扩展方法
-        /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public static bool EqualsTo(this object obj, object value)
-        {
-            if (obj == null && value == null) return true;
-            else if (obj != null)
-            {
-                return obj.Equals(value);
-            }
-            else if (value != null)
-            {
-                return value.Equals(obj);
-            }
-            return obj == value;
-        }
+
 
         /// <summary>
         /// 获取星期几
@@ -92,6 +82,69 @@ namespace TranslateVis.Tools
                 default: return "";
             }
         }
+
+
+        /// <summary>
+        /// 判断两个值是否等于的扩展方法
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static bool EqualsTo(this object obj, object value)
+        {
+            if (obj == null && value == null) return true;
+            else if (obj != null)
+            {
+                return obj.Equals(value);
+            }
+            else if (value != null)
+            {
+                return value.Equals(obj);
+            }
+            return obj == value;
+        }
+
+        public static int ToInt(this object obj)
+        {
+            if (obj == null || obj == DBNull.Value) return 0;
+            else if (int.TryParse(obj.ToString(), out int result))
+            {
+                return result;
+            }
+            else
+                return 0;
+        }
+
+        public static decimal ToDecimal(this object obj)
+        {
+            if (obj == null || obj == DBNull.Value) return 0m;
+            else if (int.TryParse(obj.ToString(), out int result))
+            {
+                return result;
+            }
+            else
+                return 0m;
+        }
+
+        public static bool IsNullOrEmpty(this object obj)
+        {
+            if (obj == null) return true;
+            else if (obj.GetType() == typeof(Enumerable) && obj == null)
+                return true;
+            else if (obj.GetType() == typeof(String) && string.IsNullOrWhiteSpace(obj.ToString()))
+                return true;
+            return false;
+        }
+
+        public static bool IsNotNullOrEmpty(this string obj)
+        {
+            if (obj != null) return true;
+            else if (obj.GetType() == typeof(Enumerable) && obj != null)
+                return true;
+            else if (obj.GetType() == typeof(String) && !string.IsNullOrWhiteSpace(obj.ToString()))
+                return true;
+            return false;
+        }
+
 
         /// <summary>
         /// 判断是否为整数

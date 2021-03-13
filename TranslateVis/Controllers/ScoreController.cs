@@ -13,7 +13,7 @@ using TranslateVis.DAL.DataEntities;
 using TranslateVis.DTO;
 using TranslateVis.Service;
 using TranslateVis.Tools;
-
+using Microsoft.AspNetCore.Authorization;
 namespace TranslateVis.Controllers
 {
     public class ScoreController : Controller
@@ -23,6 +23,7 @@ namespace TranslateVis.Controllers
         private ScoreService scoreService = new ScoreService();
         private static readonly int parentGroupId = 1;//技术事业部Id
         // GET: ScoreController
+        [Authorize]
         public ActionResult Index(string startTime = "", string endTime = "", int department = 0, string keyword = "")
         {
 

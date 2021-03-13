@@ -19,6 +19,18 @@ namespace TranslateVis.DAL.DataEntities
         ///</summary>
         public string LinkMan { get; set; }
 
+
+
+        ///<summary>
+        ///
+        ///</summary>
+        public string LoginName { get; set; }
+
+        ///<summary>
+        ///
+        ///</summary>
+        public string Password { get; set; }
+
         ///<summary>
         ///
         ///</summary>

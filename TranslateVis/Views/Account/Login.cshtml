@@ -1,0 +1,39 @@
+﻿
+@model TranslateVis.DTO.LoginViewModel
+@{
+    ViewBag.Title = "登录";
+}
+<link href="~/lib/layui/css/layui.css" rel="stylesheet" />
+<style>
+    .login {
+        margin: 250px auto;
+        width: 600px;
+        height: 450px;
+    }
+</style>
+<div class="container login">
+    <h2>登录</h2>
+    <form method="post" asp-controller="Account" asp-action="Login"
+          asp-route-returnurl="@Model.ReturnUrl">
+        <div asp-validation-summary="ModelOnly"></div>
+
+        <div class="layui-form-item">
+            <label asp-for="Username"></label>
+            <input asp-for="Username" class="layui-input" />
+            <span asp-validation-for="Username"></span>
+        </div>
+
+        <div class="layui-form-item">
+            <label asp-for="Password"></label>
+            <input asp-for="Password" class="layui-input" />
+            <span asp-validation-for="Password"></span>
+        </div>
+
+        <div class="layui-form-item">
+            <label asp-for="RememberMe"></label>
+            <input asp-for="RememberMe" type="checkbox" class="form-check-input" style="margin-left:10px;" />
+            <span asp-validation-for="RememberMe"></span>
+        </div>
+        <input type="submit" value="登录" class="layui-btn layui-btn-warm" />
+    </form>
+</div>

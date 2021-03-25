@@ -30,14 +30,14 @@ namespace TranslateVis.Controllers
 
             //2.实例翻译
             //TranslateExtension translate = new TranslateExtension();
-            //var res2 = translate.ConvertChinese("hello");
-            //var res3 = translate.ConvertChinese("love");
+            var res2 = TranslateExtension.ConvertChinese("hello");
+            var res3 = TranslateExtension.ConvertChinese("love");
 
             //3.扩展
             //01 支持字符串转实体
             //post 
-            //List<string> zhlist = "Id,名称,年龄".Split(',').ToList();
-            //string builder = AutoEntityExtension.AutoToEntity(zhlist);
+            List<string> zhlist = "Id,审批名称,开始时间,截止时间,发票,审批类型ID,打出金额,年龄,表单名称".Split(',').ToList();
+            string builder = AutoEntityExtension.AutoToEntity(zhlist);
 
             //02 支持库表转实体
 

@@ -49,10 +49,11 @@ namespace TranslateVis.Tools
         /// <returns></returns>
         private static string ToHumpNaming(this string str)
         {
-            List<string> strList = str.Split(' ', StringSplitOptions.RemoveEmptyEntries).ToList();
+            List<string> strList = str.Split(new string[1] { " "}, StringSplitOptions.RemoveEmptyEntries).ToList();
             string humpStr = string.Empty;
             foreach(var strKey in strList)
             {
+                if (strKey.IsNullOrEmpty()) continue;
                 humpStr += strKey.Substring(0, 1).ToUpper() + strKey.Substring(1,strKey.Length - 1);
             }
             return humpStr;

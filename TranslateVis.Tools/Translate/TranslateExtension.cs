@@ -1,9 +1,12 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using TranslateVis.Tools.Translate;
 
 namespace TranslateVis.Tools
@@ -16,10 +19,13 @@ namespace TranslateVis.Tools
     public static class TranslateExtension
     {
         #region[   百度通用翻译API  ]
-        private static string appId = "20210207000692830";//应用Id
-        private static string secretkey = "4KxbllaoslURKvfqMS68";//密钥
+        //private static string appId = "20210207000692830";//应用Id
+        //private static string secretkey = "4KxbllaoslURKvfqMS68";//密钥
         private static string baiduAPI = "http://api.fanyi.baidu.com/api/trans/vip/translate";//http
 
+
+        private static string appId = "20210207000692830";//应用Id
+        private static string secretkey = "4KxbllaoslURKvfqMS68";//密钥
         //private static string baiduAPIHttps = "https://fanyi-api.baidu.com/api/trans/vip/translate";   //https
         #endregion
 
@@ -94,6 +100,36 @@ namespace TranslateVis.Tools
             return unicode;
         }
 
+
+        public static async Task<string> PostWebAsync(string q, string from, string to)
+        {
+            var request = (HttpWebRequest)WebRequest.Create(baiduAPI);
+            string salt = GetRandom();
+            string idata = $"q={q}&from={from}&to={to}&appid={appId}&salt={salt}&sign={getSign(q, salt)}";
+            var data = Encoding.ASCII.GetBytes(idata);
+            request.Method = "POST";
+            request.ContentType = "application/x-www-form-urlencoded";
+            request.ContentLength = data.Length;
+            using (var stream = await request.GetRequestStreamAsync())
+            {
+                await stream.WriteAsync(data, 0, data.Length);
+            }
+
+            var response = (HttpWebResponse)await request.GetResponseAsync();
+
+            var r = new StreamReader(response.GetResponseStream());
+            //    System.Windows.MessageBox.Show(await r.ReadToEndAsync());
+            string res =  await r.ReadToEndAsync();
+            var resultJson = JsonConvert.DeserializeObject<BaiduTranslateJson>(res);
+            string unicode = string.Empty;
+            if (resultJson != null && resultJson.trans_result != null && resultJson.trans_result.Count > 0)
+            {
+                BaiduTranslateResult json = resultJson.trans_result.FirstOrDefault(x => x.src == q);
+                unicode = Unicode2String(json?.dst);
+            }
+            return unicode;
+        }
+
         //post请求
         /// <summary>
         /// 字符串翻译
@@ -127,6 +163,8 @@ namespace TranslateVis.Tools
             Random random = new Random();
             return random.Next(10000000, 99999999).ToString();
         }
+
+        
 
         /// <summary>
         /// Unicode转字符串

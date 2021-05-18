@@ -46,6 +46,7 @@
             <div class="layui-input-inline">
                 <input type="submit" class="layui-btn layui-btn-warm" value="搜索" />
                 <input type="button" class="layui-btn layui-btn-warm" onclick="viewload.exportexcel()" value="导出excel" />
+                <input type="button" class="layui-btn layui-btn-warm" onclick="viewload.batchAssessScore()" value="一键评分" />
             </div>
         }
     </div>
@@ -104,7 +105,7 @@
                             @foreach (var item in Model)
                             {
                                 <tr class="ant-table-row  ant-table-row-level-0">
-
+                                    <input type="hidden" value="@item.UserId" name="attr" class="attr"/>
                                     @{
                                         WorkingStatistics working = null;
                                         List<int> attendancedTypes = new List<int> { 1, 2 };
@@ -200,6 +201,30 @@
                 var department = $("#department").val();
                 if (confirm('确定导出？')) location.href = '/Score/ExportExcel?starttime=' + startdate
                          + '&endtime=' + enddate + '&keyword=' + keyword +"&department=" + department;
+            },
+            batchAssessScore: function () {
+                var attr = ""
+                $(".attr").each(function () {
+                    attr += $(this).val() + ",";
+                })
+                console.log(attr);
+                var startdate = datahelper.formatEnddate($("#starttime").val());
+                var enddate = datahelper.formatEnddate($("#endtime").val());
+                if (confirm("确认保存吗")) {
+                    $.ajax({
+                        url: "/Score/BatchAssessScore",
+                        type: "post",
+                        data: { startdate: startdate, enddate: enddate, str: attr },
+                        success: function (data) {
+                            if (data.code > 0) {
+                                alert("保存成功");
+                            }
+                            else {
+                                alert("保存失败");
+                            }
+                        }
+                    })
+                }
             },
             dateconfig:function(){
                 var nowDate = new Date();

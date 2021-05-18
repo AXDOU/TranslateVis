@@ -31,4 +31,8 @@
     <ProjectReference Include="..\TranslateVis.Tools\TranslateVis.Tools.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\images\" />
+  </ItemGroup>
+
 </Project>

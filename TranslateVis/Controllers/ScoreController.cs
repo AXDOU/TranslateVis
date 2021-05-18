@@ -163,6 +163,44 @@ namespace TranslateVis.Controllers
             }
         }
 
+        [HttpPost]
+        public JsonResult BatchAssessScore(DateTime startDate, DateTime endDate, string str)
+        {
+            decimal aScore = 1, bScore = 1, cScore = 3, dScore = 5;
+            List<int> list = str.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(x => int.Parse(x)).ToList();
+            List<UserScore> userScores = new List<UserScore>();
+            foreach (var userIdItem in list)
+            {
+                for (var i = 0; i < (endDate - startDate).Days; i++)
+                {
+                    DateTime attendanceDate = startDate.AddDays(i);
+                    var score = scoreService.GetSingle(x => x.UserId == userIdItem && x.AttendanceDate.Date == attendanceDate.Date);
+                    if (score != null && score.Id > 0)
+                    {
+                        continue;
+                    }
+                    UserScore userScore = new UserScore
+                    {
+                        Id = 0,
+                        Score = aScore + bScore + cScore + dScore,
+                        AScore = aScore,
+                        BScore = bScore,
+                        CScore = cScore,
+                        DScore = dScore,
+                        AttendanceDate = attendanceDate,
+                        AttendanceType = 0,
+                        Remark = string.Empty,
+                        UserId = userIdItem
+                    };
+                    userScores.Add(userScore);
+                }
+            }
+            bool result = scoreService.InsertRange(userScores);
+            if (result)
+                return Json(new { code = 200, msg = "保存成功！" });
+            else
+                return Json(new { code = 0, msg = "请重试！" });
+        }
 
         public FileResult ExportExcel(string startTime = "", string endTime = "", int department = 0, string keyword = "")
         {
@@ -201,15 +239,15 @@ namespace TranslateVis.Controllers
                 attendances.Add(attendance);
             }
             //excel
-            string dateOfWeek = $"{startDate.ToString("yyyy.MM.dd")}-{endDate.ToString("yyyy.MM.dd")}";
-            return ToCustomExcel($"{dateOfWeek}周排期表", dateOfWeek, attendances);
+            return ToCustomExcel(startDate, endDate, attendances);
         }
 
-        public FileStreamResult ToCustomExcel(string dataTitle, string dateOfWeek, List<AttendanceExportMode> attendances)
+        public FileStreamResult ToCustomExcel(DateTime startDate, DateTime endDate, List<AttendanceExportMode> attendances)
         {
             DataTable dt = new DataTable();
             NPOI.HSSF.UserModel.HSSFWorkbook workbook = new NPOI.HSSF.UserModel.HSSFWorkbook();
-            NPOI.SS.UserModel.ISheet sheet = workbook.CreateSheet(dataTitle);
+            string sheetTitle = $"{startDate:yyyy.MM.dd}-{endDate:yyyy.MM.dd}周积分表";
+            NPOI.SS.UserModel.ISheet sheet = workbook.CreateSheet(sheetTitle);
             for (var i = 0; i < 7; i++)
             {
                 sheet.SetColumnWidth(i, 13 * 256);
@@ -235,7 +273,7 @@ namespace TranslateVis.Controllers
                 if (i < 6)
                     rowheader.CreateCell(i).SetCellValue("周积分制度评分情况");
                 else
-                    rowheader.CreateCell(i).SetCellValue(dateOfWeek);
+                    rowheader.CreateCell(i).SetCellValue($"{startDate:yyyy.MM.dd}-{endDate:yyyy.MM.dd}");
                 rowheader2.CreateCell(i).SetCellValue(titles[i]);
             }
 
@@ -281,8 +319,7 @@ namespace TranslateVis.Controllers
             MemoryStream ms = new MemoryStream();
             workbook.Write(ms);
             ms.Seek(0, SeekOrigin.Begin);
-            string strdate = dataTitle + DateTime.Now.ToString("yyyyMMddHHmmss");//获取当前时间 
-            return File(ms, "application/vnd.ms-excel", strdate + ".xls");
+            return File(ms, "application/vnd.ms-excel", sheetTitle + ".xls");
         }
 
 
